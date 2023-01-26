@@ -40,10 +40,13 @@
     </select>
     <label for="brush_color_id">Brush color:</label>
     <input type="color" id="brush_color_id" value="#000000">
+    <label for="saved_drawings_id">Saved drawings:</label>
+    <select id="saved_drawings_id"></select>
 
     <script>
         var canvas = document.getElementById("canvas_id");
         var ctx = canvas.getContext("2d");
+        var savedDrawings = document.getElementById("saved_drawings_id");
         var clearButton = document.getElementById("clear_button_id");
         var saveButton = document.getElementById("save_button_id");
 
@@ -51,12 +54,20 @@
         canvas.addEventListener("mousemove", draw);
         canvas.addEventListener("mouseup", stopDrawing);
         clearButton.addEventListener("click", clearCanvas);
-        saveButton.addEventListener("click", function() {
-            var imageData = canvas.toDataURL();
-            var link = document.createElement("a");
-            link.href = imageData;
-            link.download = "CanvasDrawing.jpg";
-            link.click();
+        saveButton.addEventListener("click", function(){
+            var data = canvas.toDataURL();
+            var option = document.createElement("option");
+            option.innerHTML = "Drawing " + (savedDrawings.length + 1);
+            option.value = data;
+            savedDrawings.appendChild(option);
+        });
+
+        savedDrawings.addEventListener("change", function(){
+            var data = this.value;
+            var img = new Image();
+            img.src = data;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
         });
 
         var isDrawing = false;
